@@ -1,11 +1,20 @@
+import * as THREE from "three"
 import { useGLTF, useAnimations } from "@react-three/drei"
 import { useEffect } from "react"
 import { folder, useControls } from "leva"
+import { useTexture } from "@react-three/drei"
 
 export default function Character() {
   const character = useGLTF("/models/character.glb")
   const animations = useGLTF("/models/animations.glb")
   const { ref, actions } = useAnimations(animations.animations)
+
+  console.log(character)
+  const body = character.meshes.body
+  const eyes = character.meshes.yeux
+  const boots = character.meshes.bottes
+
+  eyes.material.color = new THREE.Color(0xfe514f)
 
   const { scale, rotation, position } = useControls({
     character: folder({
@@ -25,6 +34,15 @@ export default function Character() {
     idle?.play()
   }, [ref, actions])
 
+  useGLTF.preload("/models/character.glb")
+  useGLTF.preload("/models/animations.glb")
+
+  const allTextures = ["/textures/body-base.png", "/textures/boots-base.png"]
+
+  const [bodyBase, bootsBase] = useTexture(allTextures)
+
+  body.material.map = bodyBase
+  boots.material.map = bootsBase
   return (
     <primitive
       ref={ref}
@@ -32,6 +50,7 @@ export default function Character() {
       scale={scale}
       rotation={rotation}
       position={position}
-    />
+      material={new THREE.MeshToonMaterial()}
+    ></primitive>
   )
 }
