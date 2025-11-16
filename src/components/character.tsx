@@ -4,6 +4,21 @@ import { useEffect } from "react"
 import { folder, useControls } from "leva"
 import { useTexture } from "@react-three/drei"
 
+// Reusable material type for materials that support `color` and `map`
+type ColorMapMaterial =
+  | THREE.MeshStandardMaterial
+  | THREE.MeshPhysicalMaterial
+  | THREE.MeshPhongMaterial
+  | THREE.MeshToonMaterial
+
+// Helper to safely get a single material with `color` / `map` from a mesh
+function getColorMapMaterial(
+  material: THREE.Material | THREE.Material[]
+): ColorMapMaterial {
+  const singleMaterial = Array.isArray(material) ? material[0] : material
+  return singleMaterial as ColorMapMaterial
+}
+
 export default function Character() {
   const character = useGLTF("/models/character.glb")
   const animations = useGLTF("/models/animations.glb")
@@ -14,7 +29,9 @@ export default function Character() {
   const eyes = character.meshes.yeux
   const boots = character.meshes.bottes
 
-  eyes.material.color = new THREE.Color(0xfe514f)
+  // Use strongly-typed material helper so we can access `color`
+  const eyeMaterial = getColorMapMaterial(eyes.material)
+  eyeMaterial.color = new THREE.Color(0xfe514f)
 
   const { scale, rotation, position } = useControls({
     character: folder({
@@ -41,8 +58,12 @@ export default function Character() {
 
   const [bodyBase, bootsBase] = useTexture(allTextures)
 
-  body.material.map = bodyBase
-  boots.material.map = bootsBase
+  const bodyMaterial = getColorMapMaterial(body.material)
+  const bootsMaterial = getColorMapMaterial(boots.material)
+
+  bodyMaterial.map = bodyBase
+  bootsMaterial.map = bootsBase
+
   return (
     <primitive
       ref={ref}
