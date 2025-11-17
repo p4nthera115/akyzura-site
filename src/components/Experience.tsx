@@ -24,6 +24,7 @@ export default function Experience() {
       <Character />
       <OrbitControls />
       <directionalLight position={position} intensity={intensity} />
+      <ambientLight intensity={0.5} />
     </>
   )
 }
