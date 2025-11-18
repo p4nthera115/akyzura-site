@@ -24,25 +24,20 @@ export default function Character() {
   const animations = useGLTF("/models/animations.glb")
   const { ref, actions } = useAnimations(animations.animations)
 
-  console.log(character.meshes)
   const body = character.meshes.body
   const eyes = character.meshes.yeux
   const boots = character.meshes.bottes
   const coat = character.meshes.veste
   const skin = character.meshes.eye_details
   const misc = [
-    character.meshes.cravate,
-    character.meshes.cravate_clips,
-    character.meshes.earings,
-    character.meshes.belt,
-    character.meshes.ammo_2,
-    character.meshes.Cylinder004_1,
+    character.meshes.chemise001, // ? shirt
+    character.meshes.cravate, // ? tie
+    character.meshes.cravate_clips, // ? tie clips
+    character.meshes.earings, // ? earrings
+    character.meshes.belt, // ? belt
+    character.meshes.Cylinder004_1, // ? ammo
   ]
   const spine = character.meshes.spine
-
-  // Use strongly-typed material helper so we can access `color`
-  const eyeMaterial = getColorMapMaterial(eyes.material)
-  eyeMaterial.color = new THREE.Color(0xfe514f)
 
   const { scale, rotation, position } = useControls({
     character: folder({
@@ -77,30 +72,28 @@ export default function Character() {
   const { bodyBase, bootsBase, coatBase, skinBase, miscBase, spineBase } =
     useTexture(allTextures)
 
+  const eyesMaterial = getColorMapMaterial(eyes.material)
   const bodyMaterial = getColorMapMaterial(body.material)
   const bootsMaterial = getColorMapMaterial(boots.material)
   const coatMaterial = getColorMapMaterial(coat.material)
   const skinMaterial = getColorMapMaterial(skin.material)
-  const miscMaterial = misc.map((mesh) => getColorMapMaterial(mesh.material))
   const spineMaterial = getColorMapMaterial(spine.material)
+  const miscMaterial = misc.map((mesh) => getColorMapMaterial(mesh.material))
 
   bodyMaterial.map = bodyBase
+  eyesMaterial.map = skinBase
   bootsMaterial.map = bootsBase
   coatMaterial.map = coatBase
   skinMaterial.map = skinBase
-  miscMaterial.forEach((material) => (material.map = miscBase))
   spineMaterial.map = spineBase
-
-  // miscMaterial[miscMaterial.length - 1].color = new THREE.Color(0xfe514f)
+  miscMaterial.forEach((material) => (material.map = miscBase))
 
   bodyBase.flipY = false
   bootsBase.flipY = false
   coatBase.flipY = false
   skinBase.flipY = false
-  miscBase.flipY = false
   spineBase.flipY = false
-
-  // character.meshes.Cylinder004_1.material.color = new THREE.Color(0xfe514f)
+  miscBase.flipY = false
 
   return (
     <primitive
