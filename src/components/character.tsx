@@ -1,12 +1,6 @@
 import * as THREE from "three"
-import { useFrame } from "@react-three/fiber"
-import {
-  useGLTF,
-  useAnimations,
-  MeshPortalMaterial,
-  useTexture,
-} from "@react-three/drei"
-import { Suspense, useEffect } from "react"
+import { useGLTF, useAnimations, useTexture } from "@react-three/drei"
+import { useEffect } from "react"
 import { folder, useControls } from "leva"
 
 // Reusable material type for materials that support `color` and `map`
@@ -24,21 +18,6 @@ function getColorMapMaterial(
   return singleMaterial as ColorMapMaterial
 }
 
-const toonMaterial = new THREE.ShaderMaterial({
-  vertexShader: `
-  void main() {
-  vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  vec4 viewPosition = viewMatrix * modelPosition;
-  vec4 clipPosition = projectionMatrix * viewPosition;
-
-  gl_Position = clipPosition;
-}`,
-  fragmentShader: `
-  void main() {
-  gl_FragColor = vec4(vec3(0.39, 0.58, 0.93), 1.0);
-}`,
-})
-
 export default function Character() {
   const character = useGLTF("/models/character.glb")
   const animations = useGLTF("/models/animations.glb")
@@ -48,11 +27,11 @@ export default function Character() {
     character.meshes.Plane017,
     character.meshes.Plane017_2,
   ]
-  const body: THREE.Mesh = character.meshes.body
+  const body = character.meshes.body
   const fingers = character.meshes.Plane011
-  const eyes: THREE.Mesh = character.meshes.yeux
-  const sclera: THREE.Mesh = character.meshes.Plane017_1
-  const boots: THREE.Mesh = character.meshes.bottes
+  const eyes = character.meshes.yeux
+  const sclera = character.meshes.Plane017_1
+  const boots = character.meshes.bottes
   const jacket = character.meshes.veste
   const eyesDetails = character.meshes.eye_details
   const spine = character.meshes.spine
@@ -141,22 +120,22 @@ export default function Character() {
 
   // Get typed materials
   const eyesMaterial = getColorMapMaterial(eyes.material)
-  const bodyMaterial = getColorMapMaterial(body.material)
-  const bootsMaterial = getColorMapMaterial(boots.material)
-  const jacketMaterial = getColorMapMaterial(jacket.material)
+  // const bodyMaterial = getColorMapMaterial(body.material)
+  // const bootsMaterial = getColorMapMaterial(boots.material)
+  // const jacketMaterial = getColorMapMaterial(jacket.material)
   const eyesDetailsMaterial = getColorMapMaterial(eyesDetails.material)
-  const spineMaterial = getColorMapMaterial(spine.material)
-  const hairOutMaterial = getColorMapMaterial(hairOut.material)
+  // const spineMaterial = getColorMapMaterial(spine.material)
+  // const hairOutMaterial = getColorMapMaterial(hairOut.material)
   const hairInMaterial = getColorMapMaterial(hairIn.material)
-  const miscMaterial = miscArray.map((mesh) =>
-    getColorMapMaterial(mesh.material)
-  )
+  // const miscMaterial = miscArray.map((mesh) =>
+  //   getColorMapMaterial(mesh.material)
+  // )
   const earringsMaterial = getColorMapMaterial(misc.earrings.material)
   const faceMaterial = face.map((mesh) => getColorMapMaterial(mesh.material))
   const tieMaterial = getColorMapMaterial(misc.tie.material)
   const tieClipsMaterial = getColorMapMaterial(misc.tieClips.material)
-  const gunMaterial = gun.map((mesh) => getColorMapMaterial(mesh.material))
-  const knifeMaterial = knife.map((mesh) => getColorMapMaterial(mesh.material))
+  // const gunMaterial = gun.map((mesh) => getColorMapMaterial(mesh.material))
+  // const knifeMaterial = knife.map((mesh) => getColorMapMaterial(mesh.material))
   const shirtMaterial = getColorMapMaterial(misc.shirt.material)
   const shirtCollarMaterial = shirtCollar.map((mesh) =>
     getColorMapMaterial(mesh.material)
