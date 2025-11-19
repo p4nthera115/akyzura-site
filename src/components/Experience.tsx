@@ -1,6 +1,7 @@
 import { OrbitControls } from "@react-three/drei"
 import Character from "./character"
 import { folder, useControls } from "leva"
+import { Suspense } from "react"
 
 export default function Experience() {
   const { position, intensity } = useControls({
@@ -12,7 +13,7 @@ export default function Experience() {
         step: 0.01,
       },
       intensity: {
-        value: 1,
+        value: 3,
         min: 0,
         max: 10,
         step: 0.1,
@@ -20,11 +21,11 @@ export default function Experience() {
     }),
   })
   return (
-    <>
+    <Suspense>
       <Character />
       <OrbitControls />
       <directionalLight position={position} intensity={intensity} />
       <ambientLight intensity={0.5} />
-    </>
+    </Suspense>
   )
 }

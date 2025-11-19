@@ -1,8 +1,13 @@
 import * as THREE from "three"
-import { useGLTF, useAnimations } from "@react-three/drei"
-import { useEffect } from "react"
+import { useFrame } from "@react-three/fiber"
+import {
+  useGLTF,
+  useAnimations,
+  MeshPortalMaterial,
+  useTexture,
+} from "@react-three/drei"
+import { Suspense, useEffect } from "react"
 import { folder, useControls } from "leva"
-import { useTexture } from "@react-three/drei"
 
 // Reusable material type for materials that support `color` and `map`
 type ColorMapMaterial =
@@ -19,25 +24,58 @@ function getColorMapMaterial(
   return singleMaterial as ColorMapMaterial
 }
 
+const toonMaterial = new THREE.ShaderMaterial({
+  vertexShader: `
+  void main() {
+  vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+  vec4 viewPosition = viewMatrix * modelPosition;
+  vec4 clipPosition = projectionMatrix * viewPosition;
+
+  gl_Position = clipPosition;
+}`,
+  fragmentShader: `
+  void main() {
+  gl_FragColor = vec4(vec3(0.39, 0.58, 0.93), 1.0);
+}`,
+})
+
 export default function Character() {
   const character = useGLTF("/models/character.glb")
   const animations = useGLTF("/models/animations.glb")
   const { ref, actions } = useAnimations(animations.animations)
 
-  const body = character.meshes.body
-  const eyes = character.meshes.yeux
-  const boots = character.meshes.bottes
-  const coat = character.meshes.veste
-  const skin = character.meshes.eye_details
-  const misc = [
-    character.meshes.chemise001, // ? shirt
-    character.meshes.cravate, // ? tie
-    character.meshes.cravate_clips, // ? tie clips
-    character.meshes.earings, // ? earrings
-    character.meshes.belt, // ? belt
-    character.meshes.Cylinder004_1, // ? ammo
+  const face: THREE.Mesh[] = [
+    character.meshes.Plane017,
+    character.meshes.Plane017_2,
   ]
+  const body: THREE.Mesh = character.meshes.body
+  const fingers = character.meshes.Plane011
+  const eyes: THREE.Mesh = character.meshes.yeux
+  const sclera: THREE.Mesh = character.meshes.Plane017_1
+  const boots: THREE.Mesh = character.meshes.bottes
+  const jacket = character.meshes.veste
+  const eyesDetails = character.meshes.eye_details
   const spine = character.meshes.spine
+  const hairOut = character.meshes.NurbsPath008
+  const hairIn = character.meshes.NurbsPath008_1
+
+  const gun = [character.meshes.Cube008, character.meshes.Cube008_1]
+  const knife = [character.meshes.Cylinder002, character.meshes.Cylinder002_1]
+  const shirtCollar = [character.meshes.Plane016, character.meshes.Plane016_1]
+
+  const misc: Record<string, THREE.Mesh> = {
+    shirt: character.meshes.chemise001,
+    tie: character.meshes.cravate,
+    tieClips: character.meshes.cravate_clips,
+    earrings: character.meshes.earings,
+    belt: character.meshes.belt,
+    beltBottom: character.meshes.belt001,
+    beltTop: character.meshes.Cylinder004,
+    ammo: character.meshes.Cylinder004_1,
+    backAmmo: character.meshes.ammo_2,
+  }
+
+  const miscArray = Object.values(misc)
 
   const { scale, rotation, position } = useControls({
     character: folder({
@@ -60,41 +98,89 @@ export default function Character() {
   useGLTF.preload("/models/character.glb")
   useGLTF.preload("/models/animations.glb")
 
+  // Textures
   const allTextures = {
     bodyBase: "/textures/body-base.png",
     bootsBase: "/textures/boots-base.png",
-    coatBase: "/textures/coat-base.png",
+    jacketBase: "/textures/coat-base.png",
     skinBase: "/textures/skin-base.png",
     miscBase: "/textures/misc-base.png",
     spineBase: "/textures/weapons-base.png",
   }
 
-  const { bodyBase, bootsBase, coatBase, skinBase, miscBase, spineBase } =
+  // Load textures
+  const { bodyBase, bootsBase, jacketBase, skinBase, miscBase, spineBase } =
     useTexture(allTextures)
 
-  const eyesMaterial = getColorMapMaterial(eyes.material)
-  const bodyMaterial = getColorMapMaterial(body.material)
-  const bootsMaterial = getColorMapMaterial(boots.material)
-  const coatMaterial = getColorMapMaterial(coat.material)
-  const skinMaterial = getColorMapMaterial(skin.material)
-  const spineMaterial = getColorMapMaterial(spine.material)
-  const miscMaterial = misc.map((mesh) => getColorMapMaterial(mesh.material))
-
-  bodyMaterial.map = bodyBase
-  eyesMaterial.map = skinBase
-  bootsMaterial.map = bootsBase
-  coatMaterial.map = coatBase
-  skinMaterial.map = skinBase
-  spineMaterial.map = spineBase
-  miscMaterial.forEach((material) => (material.map = miscBase))
-
+  // Flip textures
   bodyBase.flipY = false
   bootsBase.flipY = false
-  coatBase.flipY = false
+  jacketBase.flipY = false
   skinBase.flipY = false
   spineBase.flipY = false
   miscBase.flipY = false
 
+  // Apply materials
+  face.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+  body.material = new THREE.MeshToonMaterial()
+  fingers.material = new THREE.MeshToonMaterial()
+  boots.material = new THREE.MeshToonMaterial()
+  jacket.material = new THREE.MeshToonMaterial()
+  eyes.material = new THREE.MeshToonMaterial()
+  sclera.material = new THREE.MeshToonMaterial()
+  eyesDetails.material = new THREE.MeshToonMaterial()
+  spine.material = new THREE.MeshToonMaterial()
+  hairOut.material = new THREE.MeshToonMaterial()
+  hairIn.material = new THREE.MeshToonMaterial()
+
+  miscArray.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+
+  gun.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+  knife.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+  shirtCollar.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+
+  // Get typed materials
+  const eyesMaterial = getColorMapMaterial(eyes.material)
+  const bodyMaterial = getColorMapMaterial(body.material)
+  const bootsMaterial = getColorMapMaterial(boots.material)
+  const jacketMaterial = getColorMapMaterial(jacket.material)
+  const eyesDetailsMaterial = getColorMapMaterial(eyesDetails.material)
+  const spineMaterial = getColorMapMaterial(spine.material)
+  const hairOutMaterial = getColorMapMaterial(hairOut.material)
+  const hairInMaterial = getColorMapMaterial(hairIn.material)
+  const miscMaterial = miscArray.map((mesh) =>
+    getColorMapMaterial(mesh.material)
+  )
+  const earringsMaterial = getColorMapMaterial(misc.earrings.material)
+  const faceMaterial = face.map((mesh) => getColorMapMaterial(mesh.material))
+  const tieMaterial = getColorMapMaterial(misc.tie.material)
+  const tieClipsMaterial = getColorMapMaterial(misc.tieClips.material)
+  const gunMaterial = gun.map((mesh) => getColorMapMaterial(mesh.material))
+  const knifeMaterial = knife.map((mesh) => getColorMapMaterial(mesh.material))
+  const shirtMaterial = getColorMapMaterial(misc.shirt.material)
+  const shirtCollarMaterial = shirtCollar.map((mesh) =>
+    getColorMapMaterial(mesh.material)
+  )
+
+  // Apply textures
+  eyesMaterial.map = skinBase
+  faceMaterial.forEach((material) => (material.map = skinBase))
+
+  // Apply colors
+  hairInMaterial.color = new THREE.Color(0x9998c8)
+  tieMaterial.color = new THREE.Color(0xa82e2e)
+  shirtMaterial.color = new THREE.Color(0xa82e2e)
+  tieClipsMaterial.color = new THREE.Color(0x000000)
+  earringsMaterial.color = new THREE.Color(0x000000)
+  shirtCollarMaterial.forEach(
+    (material) => (material.color = new THREE.Color(0x9998c8))
+  )
+  faceMaterial.forEach(
+    (material) => (material.color = new THREE.Color(0xd1d1eb))
+  )
+  eyesDetailsMaterial.color = new THREE.Color(0x000000)
+
+  console.log(character.meshes)
   return (
     <primitive
       ref={ref}
