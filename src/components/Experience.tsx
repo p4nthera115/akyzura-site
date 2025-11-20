@@ -24,8 +24,12 @@ export default function Experience() {
     <Suspense>
       <Character />
       <OrbitControls />
-      <directionalLight position={position} intensity={intensity} />
-      <ambientLight intensity={0.5} />
+      <directionalLight
+        position={position}
+        intensity={intensity}
+        color={0xaaaaff}
+      />
+      <ambientLight intensity={3.5} />
     </Suspense>
   )
 }

@@ -85,11 +85,19 @@ export default function Character() {
     skinBase: "/textures/skin-base.png",
     miscBase: "/textures/misc-base.png",
     spineBase: "/textures/weapons-base.png",
+    weaponsEmissive: "/textures/weapons-emissive.png",
   }
 
   // Load textures
-  const { bodyBase, bootsBase, jacketBase, skinBase, miscBase, spineBase } =
-    useTexture(allTextures)
+  const {
+    bodyBase,
+    bootsBase,
+    jacketBase,
+    skinBase,
+    miscBase,
+    spineBase,
+    weaponsEmissive,
+  } = useTexture(allTextures)
 
   // Flip textures
   bodyBase.flipY = false
@@ -98,6 +106,7 @@ export default function Character() {
   skinBase.flipY = false
   spineBase.flipY = false
   miscBase.flipY = false
+  weaponsEmissive.flipY = false
 
   // Apply materials
   face.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
@@ -109,8 +118,8 @@ export default function Character() {
   sclera.material = new THREE.MeshToonMaterial()
   eyesDetails.material = new THREE.MeshToonMaterial()
   spine.material = new THREE.MeshToonMaterial()
-  hairOut.material = new THREE.MeshBasicMaterial()
   hairIn.material = new THREE.MeshToonMaterial()
+  hairOut.material = new THREE.MeshBasicMaterial()
 
   miscArray.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
 
@@ -153,6 +162,8 @@ export default function Character() {
   miscMaterial.forEach((material) => (material.map = miscBase))
   gunMaterial.forEach((material) => (material.map = spineBase))
   knifeMaterial.forEach((material) => (material.map = spineBase))
+  gunMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
+  knifeMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
 
   // Apply colors
   hairInMaterial.color = new THREE.Color(0x9998c8)
@@ -170,6 +181,13 @@ export default function Character() {
   eyesDetailsMaterial.color = new THREE.Color(0x000000)
 
   hairOutMaterial.toneMapped = false
+
+  faceMaterial.forEach((material) => (material.toneMapped = false))
+
+  // faceMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
+
+  // faceMaterial.forEach((material) => (material.lightMap = skinBase))
+  // faceMaterial.forEach((material) => (material.lightMap = skinBase))
 
   console.log(character.meshes)
   return (
