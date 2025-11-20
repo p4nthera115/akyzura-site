@@ -155,15 +155,15 @@ export default function Character() {
   eyesMaterial.map = skinBase
   fingersMaterial.map = skinBase
   faceMaterial.forEach((material) => (material.map = skinBase))
-  bodyMaterial.map = bodyBase
-  bootsMaterial.map = bootsBase
-  jacketMaterial.map = jacketBase
-  spineMaterial.map = spineBase
-  miscMaterial.forEach((material) => (material.map = miscBase))
-  gunMaterial.forEach((material) => (material.map = spineBase))
-  knifeMaterial.forEach((material) => (material.map = spineBase))
-  gunMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
-  knifeMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
+  // bodyMaterial.map = bodyBase
+  // bootsMaterial.map = bootsBase
+  // jacketMaterial.map = jacketBase
+  // spineMaterial.map = spineBase
+  // miscMaterial.forEach((material) => (material.map = miscBase))
+  // gunMaterial.forEach((material) => (material.map = spineBase))
+  // knifeMaterial.forEach((material) => (material.map = spineBase))
+  // gunMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
+  // knifeMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
 
   // Apply colors
   hairInMaterial.color = new THREE.Color(0x9998c8)

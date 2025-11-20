@@ -2,6 +2,7 @@ import { OrbitControls } from "@react-three/drei"
 import Character from "./character"
 import { folder, useControls } from "leva"
 import { Suspense } from "react"
+import BackgroundPlane from "./background-plane"
 
 export default function Experience() {
   const { position, intensity } = useControls({
@@ -23,6 +24,7 @@ export default function Experience() {
   return (
     <Suspense>
       <Character />
+      <BackgroundPlane />
       <OrbitControls />
       <directionalLight
         position={position}
