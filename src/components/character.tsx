@@ -109,7 +109,7 @@ export default function Character() {
   sclera.material = new THREE.MeshToonMaterial()
   eyesDetails.material = new THREE.MeshToonMaterial()
   spine.material = new THREE.MeshToonMaterial()
-  hairOut.material = new THREE.MeshToonMaterial()
+  hairOut.material = new THREE.MeshBasicMaterial()
   hairIn.material = new THREE.MeshToonMaterial()
 
   miscArray.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
@@ -120,22 +120,23 @@ export default function Character() {
 
   // Get typed materials
   const eyesMaterial = getColorMapMaterial(eyes.material)
-  // const bodyMaterial = getColorMapMaterial(body.material)
-  // const bootsMaterial = getColorMapMaterial(boots.material)
-  // const jacketMaterial = getColorMapMaterial(jacket.material)
+  const bodyMaterial = getColorMapMaterial(body.material)
+  const bootsMaterial = getColorMapMaterial(boots.material)
+  const jacketMaterial = getColorMapMaterial(jacket.material)
   const eyesDetailsMaterial = getColorMapMaterial(eyesDetails.material)
-  // const spineMaterial = getColorMapMaterial(spine.material)
-  // const hairOutMaterial = getColorMapMaterial(hairOut.material)
+  const spineMaterial = getColorMapMaterial(spine.material)
+  const hairOutMaterial = getColorMapMaterial(hairOut.material)
   const hairInMaterial = getColorMapMaterial(hairIn.material)
-  // const miscMaterial = miscArray.map((mesh) =>
-  //   getColorMapMaterial(mesh.material)
-  // )
+  const miscMaterial = miscArray.map((mesh) =>
+    getColorMapMaterial(mesh.material)
+  )
+  const fingersMaterial = getColorMapMaterial(fingers.material)
   const earringsMaterial = getColorMapMaterial(misc.earrings.material)
   const faceMaterial = face.map((mesh) => getColorMapMaterial(mesh.material))
   const tieMaterial = getColorMapMaterial(misc.tie.material)
   const tieClipsMaterial = getColorMapMaterial(misc.tieClips.material)
-  // const gunMaterial = gun.map((mesh) => getColorMapMaterial(mesh.material))
-  // const knifeMaterial = knife.map((mesh) => getColorMapMaterial(mesh.material))
+  const gunMaterial = gun.map((mesh) => getColorMapMaterial(mesh.material))
+  const knifeMaterial = knife.map((mesh) => getColorMapMaterial(mesh.material))
   const shirtMaterial = getColorMapMaterial(misc.shirt.material)
   const shirtCollarMaterial = shirtCollar.map((mesh) =>
     getColorMapMaterial(mesh.material)
@@ -143,10 +144,19 @@ export default function Character() {
 
   // Apply textures
   eyesMaterial.map = skinBase
+  fingersMaterial.map = skinBase
   faceMaterial.forEach((material) => (material.map = skinBase))
+  bodyMaterial.map = bodyBase
+  bootsMaterial.map = bootsBase
+  jacketMaterial.map = jacketBase
+  spineMaterial.map = spineBase
+  miscMaterial.forEach((material) => (material.map = miscBase))
+  gunMaterial.forEach((material) => (material.map = spineBase))
+  knifeMaterial.forEach((material) => (material.map = spineBase))
 
   // Apply colors
   hairInMaterial.color = new THREE.Color(0x9998c8)
+  hairOutMaterial.color = new THREE.Color(0xffffff)
   tieMaterial.color = new THREE.Color(0xa82e2e)
   shirtMaterial.color = new THREE.Color(0xa82e2e)
   tieClipsMaterial.color = new THREE.Color(0x000000)
@@ -158,6 +168,8 @@ export default function Character() {
     (material) => (material.color = new THREE.Color(0xd1d1eb))
   )
   eyesDetailsMaterial.color = new THREE.Color(0x000000)
+
+  hairOutMaterial.toneMapped = false
 
   console.log(character.meshes)
   return (
