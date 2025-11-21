@@ -58,14 +58,14 @@ export default function Character() {
 
   const { scale, rotation, position } = useControls({
     character: folder({
-      scale: { value: 11.2, min: 1, max: 30, step: 0.1 },
+      scale: { value: 11.7, min: 1, max: 30, step: 0.1 },
       rotation: {
-        value: [-0.04, 0.32, -0.06],
+        value: [-0.11, 0.28, 0.0],
         min: -10,
         max: 10,
         step: 0.01,
       },
-      position: { value: [0.2, -4.5, 0], min: -10, max: 10 },
+      position: { value: [0.5, -4.7, 0], min: -10, max: 10, step: 0.01 },
     }),
   })
 
@@ -77,7 +77,7 @@ export default function Character() {
   useGLTF.preload("/models/character.glb")
   useGLTF.preload("/models/animations.glb")
 
-  // Textures
+  // ******************* Textures *******************
   const allTextures = {
     bodyBase: "/textures/body-base.png",
     bootsBase: "/textures/boots-base.png",
@@ -88,7 +88,7 @@ export default function Character() {
     weaponsEmissive: "/textures/weapons-emissive.png",
   }
 
-  // Load textures
+  // ******************* Load textures *******************
   const {
     bodyBase,
     bootsBase,
@@ -99,7 +99,7 @@ export default function Character() {
     weaponsEmissive,
   } = useTexture(allTextures)
 
-  // Flip textures
+  // ******************* Flip textures *******************
   bodyBase.flipY = false
   bootsBase.flipY = false
   jacketBase.flipY = false
@@ -108,7 +108,7 @@ export default function Character() {
   miscBase.flipY = false
   weaponsEmissive.flipY = false
 
-  // Apply materials
+  // ******************* Apply materials *******************
   face.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
   body.material = new THREE.MeshToonMaterial()
   fingers.material = new THREE.MeshToonMaterial()
@@ -121,24 +121,20 @@ export default function Character() {
   hairIn.material = new THREE.MeshToonMaterial()
   hairOut.material = new THREE.MeshBasicMaterial()
 
-  miscArray.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+  miscArray.forEach((mesh) => (mesh.material = new THREE.MeshBasicMaterial()))
 
-  gun.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
-  knife.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+  gun.forEach((mesh) => (mesh.material = new THREE.MeshBasicMaterial()))
+  knife.forEach((mesh) => (mesh.material = new THREE.MeshBasicMaterial()))
   shirtCollar.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
 
-  // Get typed materials
+  // ******************* Get typed materials *******************
   const eyesMaterial = getColorMapMaterial(eyes.material)
   const bodyMaterial = getColorMapMaterial(body.material)
   const bootsMaterial = getColorMapMaterial(boots.material)
   const jacketMaterial = getColorMapMaterial(jacket.material)
   const eyesDetailsMaterial = getColorMapMaterial(eyesDetails.material)
-  const spineMaterial = getColorMapMaterial(spine.material)
   const hairOutMaterial = getColorMapMaterial(hairOut.material)
   const hairInMaterial = getColorMapMaterial(hairIn.material)
-  const miscMaterial = miscArray.map((mesh) =>
-    getColorMapMaterial(mesh.material)
-  )
   const fingersMaterial = getColorMapMaterial(fingers.material)
   const earringsMaterial = getColorMapMaterial(misc.earrings.material)
   const faceMaterial = face.map((mesh) => getColorMapMaterial(mesh.material))
@@ -150,28 +146,40 @@ export default function Character() {
   const shirtCollarMaterial = shirtCollar.map((mesh) =>
     getColorMapMaterial(mesh.material)
   )
+  const beltMaterial = getColorMapMaterial(misc.belt.material)
+  const beltBottomMaterial = getColorMapMaterial(misc.beltBottom.material)
+  const beltTopMaterial = getColorMapMaterial(misc.beltTop.material)
+  const ammoMaterial = getColorMapMaterial(misc.ammo.material)
+  const backAmmoMaterial = getColorMapMaterial(misc.backAmmo.material)
 
-  // Apply textures
+  // ******************* Apply textures *******************
   eyesMaterial.map = skinBase
   fingersMaterial.map = skinBase
   faceMaterial.forEach((material) => (material.map = skinBase))
-  // bodyMaterial.map = bodyBase
-  // bootsMaterial.map = bootsBase
-  // jacketMaterial.map = jacketBase
-  // spineMaterial.map = spineBase
-  // miscMaterial.forEach((material) => (material.map = miscBase))
-  // gunMaterial.forEach((material) => (material.map = spineBase))
-  // knifeMaterial.forEach((material) => (material.map = spineBase))
-  // gunMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
-  // knifeMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
 
-  // Apply colors
+  // ******************* Apply colors *******************
   hairInMaterial.color = new THREE.Color(0x9998c8)
   hairOutMaterial.color = new THREE.Color(0xffffff)
-  tieMaterial.color = new THREE.Color(0xa82e2e)
-  shirtMaterial.color = new THREE.Color(0xa82e2e)
+  tieMaterial.color = new THREE.Color(0xbf4219)
+  shirtMaterial.color = new THREE.Color(0xbf4219)
   tieClipsMaterial.color = new THREE.Color(0x000000)
   earringsMaterial.color = new THREE.Color(0x000000)
+  bodyMaterial.color = new THREE.Color(0x000000)
+  bootsMaterial.color = new THREE.Color(0x000000)
+
+  beltMaterial.color = new THREE.Color(0xd1d1eb)
+  beltBottomMaterial.color = new THREE.Color(0xd1d1eb)
+  beltTopMaterial.color = new THREE.Color(0xd1d1eb)
+  ammoMaterial.color = new THREE.Color(0xd1d1eb)
+  backAmmoMaterial.color = new THREE.Color(0xd1d1eb)
+  gunMaterial.forEach(
+    (material) => (material.color = new THREE.Color(0xd1d1eb))
+  )
+  knifeMaterial.forEach(
+    (material) => (material.color = new THREE.Color(0xd1d1eb))
+  )
+
+  jacketMaterial.color = new THREE.Color(0x000000)
   shirtCollarMaterial.forEach(
     (material) => (material.color = new THREE.Color(0x9998c8))
   )
@@ -180,16 +188,18 @@ export default function Character() {
   )
   eyesDetailsMaterial.color = new THREE.Color(0x000000)
 
-  hairOutMaterial.toneMapped = false
-
+  // ******************* Disable tone mapping *******************
   faceMaterial.forEach((material) => (material.toneMapped = false))
+  hairOutMaterial.toneMapped = false
+  beltMaterial.toneMapped = false
+  beltBottomMaterial.toneMapped = false
+  beltTopMaterial.toneMapped = false
+  ammoMaterial.toneMapped = false
+  backAmmoMaterial.toneMapped = false
+  gunMaterial.forEach((material) => (material.toneMapped = false))
+  knifeMaterial.forEach((material) => (material.toneMapped = false))
 
-  // faceMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
-
-  // faceMaterial.forEach((material) => (material.lightMap = skinBase))
-  // faceMaterial.forEach((material) => (material.lightMap = skinBase))
-
-  console.log(character.meshes)
+  // TODO faceMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
   return (
     <primitive
       ref={ref}
