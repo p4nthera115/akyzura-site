@@ -31,7 +31,7 @@ export default function Experience() {
         intensity={intensity}
         color={0xaaaaff}
       />
-      <ambientLight intensity={3.5} />
+      <ambientLight intensity={2.3} />
     </Suspense>
   )
 }

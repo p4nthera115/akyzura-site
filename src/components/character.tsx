@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { useGLTF, useAnimations, useTexture } from "@react-three/drei"
+import { useGLTF, useAnimations, useTexture, Outlines } from "@react-three/drei"
 import { useEffect } from "react"
 import { folder, useControls } from "leva"
 
@@ -23,10 +23,11 @@ export default function Character() {
   const animations = useGLTF("/models/animations.glb")
   const { ref, actions } = useAnimations(animations.animations)
 
-  const face: THREE.Mesh[] = [
+  const face: THREE.SkinnedMesh[] = [
     character.meshes.Plane017,
     character.meshes.Plane017_2,
-  ]
+  ] as THREE.SkinnedMesh[]
+
   const body = character.meshes.body
   const fingers = character.meshes.Plane011
   const eyes = character.meshes.yeux
@@ -54,20 +55,9 @@ export default function Character() {
     backAmmo: character.meshes.ammo_2,
   }
 
-  const miscArray = Object.values(misc)
+  const tongue = character.meshes.tongue_1
 
-  const { scale, rotation, position } = useControls({
-    character: folder({
-      scale: { value: 11.7, min: 1, max: 30, step: 0.1 },
-      rotation: {
-        value: [-0.11, 0.28, 0.0],
-        min: -10,
-        max: 10,
-        step: 0.01,
-      },
-      position: { value: [0.5, -4.7, 0], min: -10, max: 10, step: 0.01 },
-    }),
-  })
+  const miscArray = Object.values(misc)
 
   useEffect(() => {
     const idle = actions?.idle
@@ -86,6 +76,7 @@ export default function Character() {
     miscBase: "/textures/misc-base.png",
     spineBase: "/textures/weapons-base.png",
     weaponsEmissive: "/textures/weapons-emissive.png",
+    skinEmissive: "/textures/skin-emissive.png",
   }
 
   // ******************* Load textures *******************
@@ -97,6 +88,7 @@ export default function Character() {
     miscBase,
     spineBase,
     weaponsEmissive,
+    skinEmissive,
   } = useTexture(allTextures)
 
   // ******************* Flip textures *******************
@@ -107,9 +99,19 @@ export default function Character() {
   spineBase.flipY = false
   miscBase.flipY = false
   weaponsEmissive.flipY = false
+  skinEmissive.flipY = false
 
   // ******************* Apply materials *******************
-  face.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+  face.forEach(
+    (mesh) =>
+      (mesh.material = new THREE.MeshToonMaterial({
+        // emissiveMap: skinEmissive,
+        // emissive: new THREE.Color(0x000000),
+        // emissiveIntensity: 1,
+        // visible: false,
+      }))
+  )
+
   body.material = new THREE.MeshToonMaterial()
   fingers.material = new THREE.MeshToonMaterial()
   boots.material = new THREE.MeshToonMaterial()
@@ -151,11 +153,14 @@ export default function Character() {
   const beltTopMaterial = getColorMapMaterial(misc.beltTop.material)
   const ammoMaterial = getColorMapMaterial(misc.ammo.material)
   const backAmmoMaterial = getColorMapMaterial(misc.backAmmo.material)
+  const tongueMaterial = getColorMapMaterial(tongue.material)
 
   // ******************* Apply textures *******************
   eyesMaterial.map = skinBase
   fingersMaterial.map = skinBase
-  faceMaterial.forEach((material) => (material.map = skinBase))
+  faceMaterial.forEach((material) => {
+    material.map = skinBase
+  })
 
   // ******************* Apply colors *******************
   hairInMaterial.color = new THREE.Color(0x9998c8)
@@ -166,7 +171,7 @@ export default function Character() {
   earringsMaterial.color = new THREE.Color(0x000000)
   bodyMaterial.color = new THREE.Color(0x000000)
   bootsMaterial.color = new THREE.Color(0x000000)
-
+  tongueMaterial.color = new THREE.Color(0x000000)
   beltMaterial.color = new THREE.Color(0xd1d1eb)
   beltBottomMaterial.color = new THREE.Color(0xd1d1eb)
   beltTopMaterial.color = new THREE.Color(0xd1d1eb)
@@ -184,7 +189,7 @@ export default function Character() {
     (material) => (material.color = new THREE.Color(0x9998c8))
   )
   faceMaterial.forEach(
-    (material) => (material.color = new THREE.Color(0xd1d1eb))
+    (material) => (material.color = new THREE.Color(0xeeeeff))
   )
   eyesDetailsMaterial.color = new THREE.Color(0x000000)
 
@@ -199,15 +204,36 @@ export default function Character() {
   gunMaterial.forEach((material) => (material.toneMapped = false))
   knifeMaterial.forEach((material) => (material.toneMapped = false))
 
-  // TODO faceMaterial.forEach((material) => (material.emissiveMap = weaponsEmissive))
+  // ******************* Controls *******************
+  const { scale, rotation, position } = useControls({
+    character: folder({
+      scale: { value: 11.7, min: 1, max: 30, step: 0.1 },
+      rotation: {
+        value: [-0.11, 0.28, 0.0],
+        min: -10,
+        max: 10,
+        step: 0.01,
+      },
+      position: { value: [0.5, -4.7, 0], min: -10, max: 10, step: 0.01 },
+    }),
+  })
+
   return (
-    <primitive
-      ref={ref}
-      object={character.scene}
-      scale={scale}
-      rotation={rotation}
-      position={position}
-      material={new THREE.MeshToonMaterial()}
-    ></primitive>
+    <group>
+      <primitive
+        ref={ref}
+        object={character.scene}
+        scale={scale}
+        rotation={rotation}
+        position={position}
+      ></primitive>
+      <skinnedMesh
+        geometry={face[0].geometry}
+        skeleton={face[0].skeleton}
+        material={new THREE.MeshToonMaterial({ visible: false })}
+      >
+        <Outlines color={0x000000} thickness={3} angle={0} />
+      </skinnedMesh>
+    </group>
   )
 }
