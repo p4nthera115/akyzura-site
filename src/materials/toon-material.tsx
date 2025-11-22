@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo } from "react"
 import * as THREE from "three"
 import CSM from "three-custom-shader-material/vanilla"
 
