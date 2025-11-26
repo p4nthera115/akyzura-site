@@ -1,7 +1,14 @@
 import * as THREE from "three"
-import { useGLTF, useAnimations, useTexture, Outlines } from "@react-three/drei"
+import {
+  useGLTF,
+  useAnimations,
+  useTexture,
+  Outlines,
+  // Edges,
+} from "@react-three/drei"
 import { useEffect } from "react"
 import { folder, useControls } from "leva"
+import ProjectionMaterial from "../materials/projection-material"
 
 // Reusable material type for materials that support `color` and `map`
 type ColorMapMaterial =
@@ -19,6 +26,7 @@ function getColorMapMaterial(
 }
 
 export default function Character() {
+  // ******************* Load models *******************
   const character = useGLTF("/models/character.glb")
   const animations = useGLTF("/models/animations.glb")
   const { ref, actions } = useAnimations(animations.animations)
@@ -27,6 +35,8 @@ export default function Character() {
     character.meshes.Plane017,
     character.meshes.Plane017_2,
   ] as THREE.SkinnedMesh[]
+
+  // ******************* Define meshes *******************
 
   const body = character.meshes.body
   const fingers = character.meshes.Plane011
@@ -59,11 +69,13 @@ export default function Character() {
 
   const miscArray = Object.values(misc)
 
+  // ******************* Play animations *******************
   useEffect(() => {
     const idle = actions?.idle
     idle?.play()
   }, [ref, actions])
 
+  // ******************* Preload models *******************
   useGLTF.preload("/models/character.glb")
   useGLTF.preload("/models/animations.glb")
 
@@ -128,6 +140,10 @@ export default function Character() {
   gun.forEach((mesh) => (mesh.material = new THREE.MeshBasicMaterial()))
   knife.forEach((mesh) => (mesh.material = new THREE.MeshBasicMaterial()))
   shirtCollar.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+
+  jacket.material = ProjectionMaterial
+  boots.material = ProjectionMaterial
+  body.material = ProjectionMaterial
 
   // ******************* Get typed materials *******************
   const eyesMaterial = getColorMapMaterial(eyes.material)
@@ -233,6 +249,7 @@ export default function Character() {
         material={new THREE.MeshToonMaterial({ visible: false })}
       >
         <Outlines color={0x000000} thickness={3} angle={0} />
+        {/* <Edges color="black" linewidth={2} threshold={30} scale={1} /> */}
       </skinnedMesh>
     </group>
   )
