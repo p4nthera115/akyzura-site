@@ -1,11 +1,5 @@
 import * as THREE from "three"
-import {
-  useGLTF,
-  useAnimations,
-  useTexture,
-  Outlines,
-  // Edges,
-} from "@react-three/drei"
+import { useGLTF, useAnimations, useTexture, Outlines } from "@react-three/drei"
 import { useEffect } from "react"
 import { folder, useControls } from "leva"
 import ProjectionMaterial from "../materials/projection-material"
@@ -249,7 +243,6 @@ export default function Character() {
         material={new THREE.MeshToonMaterial({ visible: false })}
       >
         <Outlines color={0x000000} thickness={3} angle={0} />
-        {/* <Edges color="black" linewidth={2} threshold={30} scale={1} /> */}
       </skinnedMesh>
     </group>
   )
