@@ -84,7 +84,6 @@ export default function Character() {
     spineBase: "/textures/weapons-base.png",
     weaponsEmissive: "/textures/weapons-emissive.png",
     skinEmissive: "/textures/skin-emissive.png",
-    toonGradientMap: "/textures/toon-gradient-map.png",
   }
 
   // ******************* Load textures *******************
@@ -97,7 +96,6 @@ export default function Character() {
     spineBase,
     weaponsEmissive,
     skinEmissive,
-    toonGradientMap,
   } = useTexture(allTextures)
 
   // ******************* Flip textures *******************
