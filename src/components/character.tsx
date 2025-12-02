@@ -3,6 +3,7 @@ import { useGLTF, useAnimations, useTexture, Outlines } from "@react-three/drei"
 import { useEffect } from "react"
 import { folder, useControls } from "leva"
 import ProjectionMaterial from "../materials/projection-material"
+import ToonMaterial from "../materials/toon-material"
 
 // Reusable material type for materials that support `color` and `map`
 type ColorMapMaterial =
@@ -83,6 +84,7 @@ export default function Character() {
     spineBase: "/textures/weapons-base.png",
     weaponsEmissive: "/textures/weapons-emissive.png",
     skinEmissive: "/textures/skin-emissive.png",
+    toonGradientMap: "/textures/toon-gradient-map.png",
   }
 
   // ******************* Load textures *******************
@@ -95,6 +97,7 @@ export default function Character() {
     spineBase,
     weaponsEmissive,
     skinEmissive,
+    toonGradientMap,
   } = useTexture(allTextures)
 
   // ******************* Flip textures *******************
@@ -108,16 +111,6 @@ export default function Character() {
   skinEmissive.flipY = false
 
   // ******************* Apply materials *******************
-  face.forEach(
-    (mesh) =>
-      (mesh.material = new THREE.MeshToonMaterial({
-        // emissiveMap: skinEmissive,
-        // emissive: new THREE.Color(0x000000),
-        // emissiveIntensity: 1,
-        // visible: false,
-      }))
-  )
-
   body.material = new THREE.MeshToonMaterial()
   fingers.material = new THREE.MeshToonMaterial()
   boots.material = new THREE.MeshToonMaterial()
@@ -138,6 +131,11 @@ export default function Character() {
   jacket.material = ProjectionMaterial
   boots.material = ProjectionMaterial
   body.material = ProjectionMaterial
+
+  face.forEach((mesh) => (mesh.material = ToonMaterial(true, skinBase)))
+  eyes.material = ToonMaterial(false, skinBase)
+  fingers.material = ToonMaterial(false, skinBase)
+  eyesDetails.material = ToonMaterial(false, skinBase)
 
   // ******************* Get typed materials *******************
   const eyesMaterial = getColorMapMaterial(eyes.material)
@@ -164,6 +162,7 @@ export default function Character() {
   const ammoMaterial = getColorMapMaterial(misc.ammo.material)
   const backAmmoMaterial = getColorMapMaterial(misc.backAmmo.material)
   const tongueMaterial = getColorMapMaterial(tongue.material)
+  const scleraMaterial = getColorMapMaterial(sclera.material)
 
   // ******************* Apply textures *******************
   eyesMaterial.map = skinBase
@@ -198,13 +197,14 @@ export default function Character() {
   shirtCollarMaterial.forEach(
     (material) => (material.color = new THREE.Color(0x9998c8))
   )
-  faceMaterial.forEach(
-    (material) => (material.color = new THREE.Color(0xeeeeff))
-  )
+  // faceMaterial.forEach(
+  //   (material) => (material.color = new THREE.Color(0xeeeeff))
+  // )
   eyesDetailsMaterial.color = new THREE.Color(0x000000)
+  scleraMaterial.color = new THREE.Color(0xa490ff)
 
   // ******************* Disable tone mapping *******************
-  faceMaterial.forEach((material) => (material.toneMapped = false))
+  // faceMaterial.forEach((material) => (material.toneMapped = false))
   hairOutMaterial.toneMapped = false
   beltMaterial.toneMapped = false
   beltBottomMaterial.toneMapped = false
