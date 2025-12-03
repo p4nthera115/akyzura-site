@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { folder, useControls } from "leva"
 import ProjectionMaterial from "../materials/projection-material"
 import ToonMaterial from "../materials/toon-material"
+import { useFrame } from "@react-three/fiber"
 
 // Reusable material type for materials that support `color` and `map`
 type ColorMapMaterial =
@@ -26,13 +27,11 @@ export default function Character() {
   const animations = useGLTF("/models/animations.glb")
   const { ref, actions } = useAnimations(animations.animations)
 
+  // ******************* Define meshes *******************
   const face: THREE.SkinnedMesh[] = [
     character.meshes.Plane017,
     character.meshes.Plane017_2,
   ] as THREE.SkinnedMesh[]
-
-  // ******************* Define meshes *******************
-
   const body = character.meshes.body
   const fingers = character.meshes.Plane011
   const eyes = character.meshes.yeux
@@ -171,6 +170,11 @@ export default function Character() {
   // ******************* Disable tone mapping *******************
   faceMaterial.forEach((material) => (material.toneMapped = false))
   hairOutMaterial.toneMapped = false
+
+  // ******************* Update uniforms *******************
+  useFrame((state) => {
+    ProjectionMaterial.uniforms.uTime.value = state.clock.elapsedTime
+  })
 
   // ******************* Controls *******************
   const { scale, rotation, position } = useControls({
