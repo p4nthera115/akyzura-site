@@ -46,11 +46,11 @@ export default function Character() {
 
   const gun = [character.meshes.Cube008, character.meshes.Cube008_1]
   const knife = [character.meshes.Cylinder002, character.meshes.Cylinder002_1]
-  const shirtCollar = [character.meshes.Plane016, character.meshes.Plane016_1]
+  const shirt = [character.meshes.Plane016, character.meshes.Plane016_1]
 
   const misc: Record<string, THREE.Mesh> = {
-    shirt: character.meshes.chemise001,
     tie: character.meshes.cravate,
+    tieKnot: character.meshes.chemise001,
     tieClips: character.meshes.cravate_clips,
     earrings: character.meshes.earings,
     belt: character.meshes.belt,
@@ -95,7 +95,7 @@ export default function Character() {
 
   gun.forEach((mesh) => (mesh.material = new THREE.MeshBasicMaterial()))
   knife.forEach((mesh) => (mesh.material = new THREE.MeshBasicMaterial()))
-  shirtCollar.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
+  shirt.forEach((mesh) => (mesh.material = new THREE.MeshToonMaterial()))
 
   jacket.material = ProjectionMaterial
   boots.material = ProjectionMaterial
@@ -105,10 +105,6 @@ export default function Character() {
   eyes.material = ToonMaterial(false, skinBase)
   fingers.material = ToonMaterial(false, skinBase)
   eyesDetails.material = ToonMaterial(false, skinBase)
-
-  hairIn.castShadow = true
-  hairOut.castShadow = true
-  face.forEach((mesh) => (mesh.receiveShadow = true))
 
   // ******************* Get typed materials *******************
   const eyesMaterial = getColorMapMaterial(eyes.material)
@@ -122,10 +118,8 @@ export default function Character() {
   const tieClipsMaterial = getColorMapMaterial(misc.tieClips.material)
   const gunMaterial = gun.map((mesh) => getColorMapMaterial(mesh.material))
   const knifeMaterial = knife.map((mesh) => getColorMapMaterial(mesh.material))
-  const shirtMaterial = getColorMapMaterial(misc.shirt.material)
-  const shirtCollarMaterial = shirtCollar.map((mesh) =>
-    getColorMapMaterial(mesh.material)
-  )
+  const tieKnotMaterial = getColorMapMaterial(misc.tieKnot.material)
+  const shirtMaterial = shirt.map((mesh) => getColorMapMaterial(mesh.material))
   const beltMaterial = getColorMapMaterial(misc.belt.material)
   const beltBottomMaterial = getColorMapMaterial(misc.beltBottom.material)
   const beltTopMaterial = getColorMapMaterial(misc.beltTop.material)
@@ -142,15 +136,16 @@ export default function Character() {
   })
 
   // ******************* Apply colors *******************
+
+  //* Head
+  eyesDetailsMaterial.color = new THREE.Color(0x000000)
+  scleraMaterial.color = new THREE.Color(0xf0f1ff)
+  tongueMaterial.color = new THREE.Color(0x000000)
   hairInMaterial.color = new THREE.Color(0x8f95f7)
   hairOutMaterial.color = new THREE.Color(0xffffff)
-  tieMaterial.color = new THREE.Color(0xbf4219)
-  shirtMaterial.color = new THREE.Color(0xbf4219)
-  tieClipsMaterial.color = new THREE.Color(0x000000)
   earringsMaterial.color = new THREE.Color(0x000000)
 
-  tongueMaterial.color = new THREE.Color(0x000000)
-
+  //* Belt
   beltMaterial.color = new THREE.Color(0x9298fc)
   beltBottomMaterial.color = new THREE.Color(0x9298fc)
   beltTopMaterial.color = new THREE.Color(0x9298fc)
@@ -163,22 +158,19 @@ export default function Character() {
     (material) => (material.color = new THREE.Color(0x9298fc))
   )
 
-  shirtCollarMaterial.forEach(
+  //* Shirt
+  shirtMaterial.forEach(
     (material) => (material.color = new THREE.Color(0x7d84f5))
   )
-  eyesDetailsMaterial.color = new THREE.Color(0x000000)
-  scleraMaterial.color = new THREE.Color(0xf0f1ff)
+
+  //* Tie
+  tieKnotMaterial.color = new THREE.Color(0xbf4219)
+  tieMaterial.color = new THREE.Color(0xbf4219)
+  tieClipsMaterial.color = new THREE.Color(0x000000)
 
   // ******************* Disable tone mapping *******************
   faceMaterial.forEach((material) => (material.toneMapped = false))
   hairOutMaterial.toneMapped = false
-  // beltMaterial.toneMapped = false
-  // beltBottomMaterial.toneMapped = false
-  // beltTopMaterial.toneMapped = false
-  // ammoMaterial.toneMapped = false
-  // backAmmoMaterial.toneMapped = false
-  // gunMaterial.forEach((material) => (material.toneMapped = false))
-  // knifeMaterial.forEach((material) => (material.toneMapped = false))
 
   // ******************* Controls *******************
   const { scale, rotation, position } = useControls({
