@@ -19,6 +19,7 @@ const vertexShader = `
 `
 
 const fragmentShader = `
+  #define PI 3.1415926535897932384626433832795
   varying vec4 vScreenPos;
 
   uniform float uTime;
@@ -76,13 +77,32 @@ const fragmentShader = `
 }
 
 
-  float lines(in vec2 pos, float b){
-    // TODO fbm stuff here 
-      float scale = 6.0;
+  float fbm1(in vec2 st) {
+      float value = 0.0;
+      float amplitude = 0.5;
+      float frequency = 0.0;
+
+      for (int i = 0; i < 10; i++) {
+          value += amplitude * noise(st);
+          st *= 2.0;
+          amplitude *= 0.5;
+      }
+      return value;
+  }
+
+  float lines(in vec2 pos){
+      float scale = 8.0; // line frequency
+      float lineThickness = 0.01;
+      
       pos *= scale;
-      return step(1.,smoothstep(0.0,
-                      .5+b*.5,
-                      abs((sin(pos.x*3.1415)+b*2.0))*.5));
+      
+      float smoothLine = smoothstep(0., .5 + lineThickness * 0.5, (sin(pos.x * PI) + lineThickness * 2.0) * .5);
+      float line = smoothstep(0.9, 1.0, smoothLine);
+      // float line = step(0.9, smoothLine);
+      
+      // line += fbm1(pos);
+
+      return line;
   }
 
 
@@ -102,7 +122,7 @@ const fragmentShader = `
 
     pos = rotate2d(noise(pos)) * pos * cos(t) * amplitude;
 
-    pattern = lines(pos,0.6);
+    pattern = lines(pos);
 
     vec3 backgroundColor = vec3(0.);
     vec3 lineColor = vec3(0.439, 0.392, 0.561);
