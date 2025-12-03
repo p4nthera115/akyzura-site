@@ -138,12 +138,11 @@ export default function ToonMaterial(skin: boolean, textureMap: THREE.Texture) {
   })
 
   material.onBeforeCompile = (shader) => {
-    // Add custom uniforms
     shader.uniforms.uTexture = { value: textureMap }
     shader.uniforms.uSkinLow = { value: new THREE.Color(0x161616) }
-    shader.uniforms.uSkinMidLow = { value: new THREE.Color(0xdcd4ff) }
-    shader.uniforms.uSkinMidHigh = { value: new THREE.Color(0xf3f0ff) }
-    shader.uniforms.uSkinHigh = { value: new THREE.Color(0xff5b48) }
+    shader.uniforms.uSkinMidLow = { value: new THREE.Color(0xd4d5ff) }
+    shader.uniforms.uSkinMidHigh = { value: new THREE.Color(0xf0f1ff) }
+    shader.uniforms.uSkinHigh = { value: new THREE.Color(0xfc9e8b) }
 
     shader.uniforms.uEyesLow = { value: new THREE.Color(0x000000) }
     shader.uniforms.uEyesMidLow = { value: new THREE.Color(0x564b89) }
@@ -151,7 +150,6 @@ export default function ToonMaterial(skin: boolean, textureMap: THREE.Texture) {
     shader.uniforms.uEyesHigh = { value: new THREE.Color(0xff514f) }
     shader.uniforms.uIsSkin = { value: skin ? 1.0 : 0.0 }
 
-    // Inject color ramp logic after all lighting calculations
     shader.fragmentShader =
       "uniform sampler2D uTexture;\nuniform vec3 uSkinLow;\nuniform vec3 uSkinMidLow;\nuniform vec3 uSkinMidHigh;\nuniform vec3 uSkinHigh;\nuniform vec3 uEyesLow;\nuniform vec3 uEyesMidLow;\nuniform vec3 uEyesMidHigh;\nuniform vec3 uEyesHigh;\nuniform float uIsSkin;\n" +
       shader.fragmentShader
@@ -164,8 +162,7 @@ export default function ToonMaterial(skin: boolean, textureMap: THREE.Texture) {
       vec3 litColor = gl_FragColor.rgb;
 
       float brightness = dot(litColor, vec3(0.2126, 0.7152, 0.0722));
-      brightness = clamp(brightness, 0.0, 1.0);
-      float normalizedBrightness = normalize(brightness);
+      brightness = clamp(brightness, 0.0, 5.0);
 
       vec3 finalColor;
 
@@ -175,7 +172,7 @@ export default function ToonMaterial(skin: boolean, textureMap: THREE.Texture) {
           finalColor = uSkinLow; // black
         } else if (brightness < 0.5) {
           finalColor = mix(uSkinLow, uSkinMidLow, smoothstep(0.0, 0.187, brightness)); // purple
-        } else if (brightness <= 1.0) {
+        } else if (brightness < 1.45) {
           finalColor = mix(uSkinMidLow, uSkinMidHigh, smoothstep(0.3, 0.75, brightness)); // white
         } else {
           finalColor = uSkinHigh; // red

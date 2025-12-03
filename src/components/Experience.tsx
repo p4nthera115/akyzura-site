@@ -39,14 +39,6 @@ export default function Experience() {
       <BackgroundPlane />
       <OrbitControls />
       <directionalLight position={position} intensity={intensity} />
-      {/* <pointLight
-        ref={redLightRef}
-        position={[-3.8, -0.5, 5]}
-        intensity={1}
-        color={0xbf4219}
-        decay={3}
-      /> */}
-      {/* <ambientLight intensity={2.7} color={0x0000ff} /> */}
     </Suspense>
   )
 }
