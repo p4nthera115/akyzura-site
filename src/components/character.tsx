@@ -135,10 +135,12 @@ export default function Character() {
   fingers.material = ToonMaterial(false, skinBase)
   eyesDetails.material = ToonMaterial(false, skinBase)
 
+  hairIn.castShadow = true
+  hairOut.castShadow = true
+  face.forEach((mesh) => (mesh.receiveShadow = true))
+
   // ******************* Get typed materials *******************
   const eyesMaterial = getColorMapMaterial(eyes.material)
-  const bodyMaterial = getColorMapMaterial(body.material)
-  const bootsMaterial = getColorMapMaterial(boots.material)
   const jacketMaterial = getColorMapMaterial(jacket.material)
   const eyesDetailsMaterial = getColorMapMaterial(eyesDetails.material)
   const hairOutMaterial = getColorMapMaterial(hairOut.material)
@@ -176,9 +178,9 @@ export default function Character() {
   shirtMaterial.color = new THREE.Color(0xbf4219)
   tieClipsMaterial.color = new THREE.Color(0x000000)
   earringsMaterial.color = new THREE.Color(0x000000)
-  bodyMaterial.color = new THREE.Color(0x000000)
-  bootsMaterial.color = new THREE.Color(0x000000)
+
   tongueMaterial.color = new THREE.Color(0x000000)
+
   beltMaterial.color = new THREE.Color(0xd1d1eb)
   beltBottomMaterial.color = new THREE.Color(0xd1d1eb)
   beltTopMaterial.color = new THREE.Color(0xd1d1eb)
@@ -195,9 +197,6 @@ export default function Character() {
   shirtCollarMaterial.forEach(
     (material) => (material.color = new THREE.Color(0x9998c8))
   )
-  // faceMaterial.forEach(
-  //   (material) => (material.color = new THREE.Color(0xeeeeff))
-  // )
   eyesDetailsMaterial.color = new THREE.Color(0x000000)
   scleraMaterial.color = new THREE.Color(0xa490ff)
 

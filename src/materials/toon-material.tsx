@@ -142,7 +142,7 @@ export default function ToonMaterial(skin: boolean, textureMap: THREE.Texture) {
     shader.uniforms.uTexture = { value: textureMap }
     shader.uniforms.uSkinLow = { value: new THREE.Color(0x161616) }
     shader.uniforms.uSkinMidLow = { value: new THREE.Color(0xdcd4ff) }
-    shader.uniforms.uSkinMidHigh = { value: new THREE.Color(0xffffff) }
+    shader.uniforms.uSkinMidHigh = { value: new THREE.Color(0xf3f0ff) }
     shader.uniforms.uSkinHigh = { value: new THREE.Color(0xff5b48) }
 
     shader.uniforms.uEyesLow = { value: new THREE.Color(0x000000) }
@@ -176,31 +176,20 @@ export default function ToonMaterial(skin: boolean, textureMap: THREE.Texture) {
         } else if (brightness < 0.5) {
           finalColor = mix(uSkinLow, uSkinMidLow, smoothstep(0.0, 0.187, brightness)); // purple
         } else if (brightness <= 1.0) {
-          finalColor = mix(uSkinMidLow, uSkinMidHigh, smoothstep(0.18, 0.2, brightness)); // white
+          finalColor = mix(uSkinMidLow, uSkinMidHigh, smoothstep(0.3, 0.75, brightness)); // white
         } else {
           finalColor = uSkinHigh; // red
         }
-      // if (uIsSkin > 0.5) {
-      //   // Skin color ramp
-      //   if (brightness < 0.1) {
-      //     finalColor = uSkinLow; // black
-      //   } else if (brightness < 0.187) {
-      //     finalColor = mix(uSkinLow, uSkinMidLow, smoothstep(0.0, 0.187, brightness)); // purple
-      //   } else if (brightness < 0.32) {
-      //     finalColor = mix(uSkinMidLow, uSkinMidHigh, smoothstep(0.18, 0.2, brightness)); // white
-      //   } else {
-      //     finalColor = uSkinHigh; // red
-      //   }
       } else {
         // Eyes color ramp
-        if (brightness < 0.125) {
-          finalColor = uEyesLow;
-        } else if (brightness < 0.206) {
-          finalColor = uEyesMidLow;
-        } else if (brightness < 0.503) {
-          finalColor = uEyesMidHigh;
+        if (brightness < 0.24) {
+          finalColor = uEyesLow; // black
+        } else if (brightness < 0.276) {
+          finalColor = uEyesMidLow; // purple
+        } else if (brightness < 0.343) {
+          finalColor = uEyesMidHigh; // dark red
         } else {
-          finalColor = uEyesHigh;
+          finalColor = uEyesHigh; // light red
         }
       }
 
