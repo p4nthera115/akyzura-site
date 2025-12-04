@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import { useGLTF, useAnimations, useTexture, Outlines } from "@react-three/drei"
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { folder, useControls } from "leva"
 import ProjectionMaterial from "../materials/projection-material"
 import ToonMaterial from "../materials/toon-material"
@@ -100,6 +100,8 @@ export default function Character() {
   boots.material = ProjectionMaterial
   body.material = ProjectionMaterial
 
+  ProjectionMaterial.uniforms.uColor.value.set(0.365, 0.337, 0.58)
+
   face.forEach((mesh) => (mesh.material = ToonMaterial(true, skinBase)))
   eyes.material = ToonMaterial(false, skinBase)
   fingers.material = ToonMaterial(false, skinBase)
@@ -171,9 +173,21 @@ export default function Character() {
   faceMaterial.forEach((material) => (material.toneMapped = false))
   hairOutMaterial.toneMapped = false
 
+  // ******************* Color Management *******************
+  const currentColor = useRef(new THREE.Vector3(0.365, 0.337, 0.58))
+  const [activeColor, setActiveColor] = useState(false)
+
+  const activeColorVec = new THREE.Vector3(1.0, 0.0, 0.0)
+  const inactiveColorVec = new THREE.Vector3(0.365, 0.337, 0.58)
+
   // ******************* Update uniforms *******************
-  useFrame((state) => {
+  useFrame((state, delta) => {
     ProjectionMaterial.uniforms.uTime.value = state.clock.elapsedTime
+
+    const targetColor = activeColor ? activeColorVec : inactiveColorVec
+    currentColor.current.lerp(targetColor, delta * 10)
+
+    ProjectionMaterial.uniforms.uColor.value.copy(currentColor.current)
   })
 
   // ******************* Controls *******************
@@ -193,6 +207,9 @@ export default function Character() {
   return (
     <group>
       <primitive
+        onClick={() => {
+          setActiveColor(!activeColor)
+        }}
         ref={ref}
         object={character.scene}
         scale={scale}
