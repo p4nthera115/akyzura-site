@@ -23,6 +23,7 @@ const fragmentShader = `
   varying vec4 vScreenPos;
 
   uniform float uTime;
+  uniform vec3 uColor;
 
   // 2D Random
   float random (in vec2 st) {
@@ -62,7 +63,7 @@ const fragmentShader = `
                   #define NUM_OCTAVES 5
 
   float lines(in vec2 pos){
-      float smoothLine = smoothstep(0.2, 1.1, ( sin(pos.x * PI * 10.) ));
+      float smoothLine = smoothstep(0.2, 1.1, ( sin(pos.x * PI * 1.) ));
       float line = smoothstep(0.8, 1., smoothLine);
 
       return line;
@@ -72,21 +73,22 @@ const fragmentShader = `
     // Get screen position
 	  vec2 vCoords = vScreenPos.xy;
 		vCoords /= vScreenPos.w;
+    vCoords.x -= 0.5;
+    vCoords.y -= 0.5;
 
     vec2 pos = vCoords.yx*vec2(5.,5.);
 
     float pattern = pos.x;
-    float frequency = 0.07;
-    float amplitude = 1.;
-    float t = uTime * frequency;
-    t = abs(cos(t));
+    float frequency = 0.2;
+    float amplitude = 2.;
+    float t = (cos(uTime * frequency) + 3.) * amplitude;
 
-    pos = rotate2d(noise(pos)) * pos * cos(t) * amplitude;
+    pos = rotate2d(noise(pos)) * pos * t;
 
     pattern = lines(pos);
 
     vec3 backgroundColor = vec3(0.);
-    vec3 lineColor = vec3(0.365, 0.337, 0.580);
+    vec3 lineColor = uColor;
 
     gl_FragColor = vec4(mix(backgroundColor, lineColor, pattern), 1.0);
   }
@@ -94,6 +96,7 @@ const fragmentShader = `
 const ProjectionMaterial = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0 },
+    uColor: { value: new THREE.Vector3(0.365, 0.337, 0.58) },
   },
   vertexShader: vertexShader,
   fragmentShader: fragmentShader,
