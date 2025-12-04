@@ -61,60 +61,21 @@ const fragmentShader = `
   }
                   #define NUM_OCTAVES 5
 
-  float fbm ( in vec2 _st) {
-    float v = 0.0;
-    float a = 0.5;
-    vec2 shift = vec2(100.0);
-    // Rotate to reduce axial bias
-    mat2 rot = mat2(cos(0.5), sin(0.5),
-                    -sin(0.5), cos(0.50));
-    for (int i = 0; i < NUM_OCTAVES; ++i) {
-        v += a * noise(_st);
-        _st = rot * _st * 2.0 + shift;
-        a *= 0.5;
-    }
-    return v;
-}
-
-
-  float fbm1(in vec2 st) {
-      float value = 0.0;
-      float amplitude = 0.5;
-      float frequency = 0.0;
-
-      for (int i = 0; i < 10; i++) {
-          value += amplitude * noise(st);
-          st *= 2.0;
-          amplitude *= 0.5;
-      }
-      return value;
-  }
-
   float lines(in vec2 pos){
-      float scale = 8.0; // line frequency
-      float lineThickness = 0.01;
-      
-      pos *= scale;
-      
-      float smoothLine = smoothstep(0., .5 + lineThickness * 0.5, (sin(pos.x * PI) + lineThickness * 2.0) * .5);
-      float line = smoothstep(0.9, 1.0, smoothLine);
-      // float line = step(0.9, smoothLine);
-      
-      // line += fbm1(pos);
+      float smoothLine = smoothstep(0.2, 1.1, ( sin(pos.x * PI * 10.) ));
+      float line = smoothstep(0.8, 1., smoothLine);
 
       return line;
   }
-
 
   void main() {
     // Get screen position
 	  vec2 vCoords = vScreenPos.xy;
 		vCoords /= vScreenPos.w;
-		// vCoords = vCoords * 0.5 + 0.5; // normalize
 
     vec2 pos = vCoords.yx*vec2(5.,5.);
 
-    float pattern = pos.x / 2.0;
+    float pattern = pos.x;
     float frequency = 0.07;
     float amplitude = 1.;
     float t = uTime * frequency;
@@ -125,11 +86,11 @@ const fragmentShader = `
     pattern = lines(pos);
 
     vec3 backgroundColor = vec3(0.);
-    vec3 lineColor = vec3(0.439, 0.392, 0.561);
+    vec3 lineColor = vec3(0.365, 0.337, 0.580);
+
     gl_FragColor = vec4(mix(backgroundColor, lineColor, pattern), 1.0);
   }
 `
-
 const ProjectionMaterial = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0 },
