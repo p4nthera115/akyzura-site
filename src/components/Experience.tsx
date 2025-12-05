@@ -1,4 +1,4 @@
-import { OrbitControls } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei"
 import Character from "./character"
 import { folder, useControls } from "leva"
 import { Suspense, useRef, type RefObject } from "react"
@@ -7,14 +7,34 @@ import * as THREE from "three"
 import { useHelper } from "@react-three/drei"
 
 export default function Experience() {
-  const redLightRef = useRef<THREE.PointLight>(null)
+  const cameraRef = useRef<THREE.PerspectiveCamera>(null)
+  useHelper(cameraRef as RefObject<THREE.PerspectiveCamera>, THREE.CameraHelper)
+  const lightRef = useRef<THREE.DirectionalLight>(null)
   useHelper(
-    redLightRef as RefObject<THREE.PointLight>,
-    THREE.PointLightHelper,
-    0.5
+    lightRef as RefObject<THREE.DirectionalLight>,
+    THREE.DirectionalLightHelper,
+    1,
+    0x0000ff
   )
 
-  const { position, intensity } = useControls({
+  const camera = useControls({
+    camera: folder({
+      position: {
+        value: [0, 0, -5],
+        min: -100,
+        max: 100,
+        step: 0.01,
+      },
+      rotation: {
+        value: [0, 0, 0],
+        min: -10,
+        max: 10,
+        step: 0.01,
+      },
+    }),
+  })
+
+  const light = useControls({
     light: folder({
       position: {
         value: [-1.0299999999999765, 7.230000000000002, 7.759999999999992],
@@ -35,11 +55,20 @@ export default function Experience() {
 
   return (
     <Suspense>
-      <Character />
-      <BackgroundPlane />
-      <OrbitControls />
-      <directionalLight position={position} intensity={intensity} />
-      {/* <ambientLight intensity={1} color={0x0000ff} /> */}
+      <PerspectiveCamera
+        ref={cameraRef}
+        position={camera.position}
+        rotation={camera.rotation}
+      >
+        <Character />
+        <BackgroundPlane />
+        <OrbitControls />
+      </PerspectiveCamera>
+      <directionalLight
+        ref={lightRef}
+        position={light.position}
+        intensity={light.intensity}
+      />
     </Suspense>
   )
 }

@@ -45,7 +45,10 @@ export default function Character() {
 
   const gun = [character.meshes.Cube008, character.meshes.Cube008_1]
   const knife = [character.meshes.Cylinder002, character.meshes.Cylinder002_1]
-  const shirt = [character.meshes.Plane016, character.meshes.Plane016_1]
+  const shirt = [
+    character.meshes.Plane016,
+    character.meshes.Plane016_1,
+  ] as THREE.SkinnedMesh[]
 
   const misc: Record<string, THREE.Mesh> = {
     tie: character.meshes.cravate,
@@ -222,6 +225,13 @@ export default function Character() {
         material={new THREE.MeshToonMaterial({ visible: false })}
       >
         <Outlines color={0x000000} thickness={3} angle={0} />
+      </skinnedMesh>
+      <skinnedMesh
+        geometry={shirt[0].geometry}
+        skeleton={shirt[0].skeleton}
+        material={new THREE.MeshToonMaterial({ visible: false })}
+      >
+        <Outlines color={0x000000} thickness={5} angle={Math.PI * 2} />
       </skinnedMesh>
     </group>
   )
