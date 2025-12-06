@@ -5,6 +5,7 @@ import { folder, useControls } from "leva"
 import ProjectionMaterial from "../materials/projection-material"
 import ToonMaterial from "../materials/toon-material"
 import { useFrame } from "@react-three/fiber"
+import ShirtMaterial from "../materials/shirt-material"
 
 // Reusable material type for materials that support `color` and `map`
 type ColorMapMaterial =
@@ -109,6 +110,8 @@ export default function Character() {
   eyes.material = ToonMaterial(false, skinBase)
   fingers.material = ToonMaterial(false, skinBase)
   eyesDetails.material = ToonMaterial(false, skinBase)
+
+  shirt.forEach((mesh) => (mesh.material = ShirtMaterial()))
 
   // ******************* Get typed materials *******************
   const eyesMaterial = getColorMapMaterial(eyes.material)
@@ -229,7 +232,12 @@ export default function Character() {
       <skinnedMesh
         geometry={shirt[0].geometry}
         skeleton={shirt[0].skeleton}
-        material={new THREE.MeshToonMaterial({ visible: false })}
+        material={
+          new THREE.MeshToonMaterial({
+            color: new THREE.Color(0x000000),
+            visible: false,
+          })
+        }
       >
         <Outlines color={0x000000} thickness={5} angle={Math.PI * 2} />
       </skinnedMesh>
