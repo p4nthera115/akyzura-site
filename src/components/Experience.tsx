@@ -1,7 +1,7 @@
 import { OrbitControls, PerspectiveCamera, useHelper } from "@react-three/drei"
 import Character from "./character"
 import { folder, useControls } from "leva"
-import { Suspense, useEffect, useRef, type RefObject } from "react"
+import { Suspense, useRef, type RefObject } from "react"
 import BackgroundPlane from "./background-plane"
 import * as THREE from "three"
 import { useFrame, useThree } from "@react-three/fiber"
@@ -24,18 +24,6 @@ export default function Experience() {
     "blue"
   )
 
-  useEffect(() => {
-    console.log(cameraHelper, lightHelper)
-    if (useProdCamera && perspectiveCameraRef.current) {
-      set({ camera: perspectiveCameraRef.current })
-    }
-  }, [
-    cameraHelper,
-    lightHelper,
-    perspectiveCameraRef.current,
-    lightRef.current,
-  ])
-
   const { useProdCamera } = useControls({
     useProdCamera: {
       value: false,
@@ -52,13 +40,19 @@ export default function Experience() {
         value: [0, 0, 12],
         min: -100,
         max: 100,
-        step: 1,
+        step: 0.1,
       },
       rotation: {
         value: [-0.1, 0.1, 0],
         min: -10,
         max: 10,
-        step: 0.1,
+        step: 0.01,
+      },
+      zoom: {
+        value: 1,
+        min: 0.1,
+        max: 10,
+        step: 0.01,
       },
       fov: {
         value: 42,
@@ -114,14 +108,12 @@ export default function Experience() {
       cameraHelper.current.visible = cameraControls.visible
     }
   })
-
   return (
-    // <Suspense>
     <>
-      {/* Development camera with OrbitControls - this is the default */}
-      {!useProdCamera && <OrbitControls />}
+      {/* Development camera with OrbitControls */}
+      <OrbitControls enabled={!useProdCamera} />
 
-      {/* Production perspective camera - visible as helper in dev mode */}
+      {/* Production perspective camera */}
       <PerspectiveCamera
         ref={perspectiveCameraRef}
         makeDefault={useProdCamera}
@@ -130,6 +122,7 @@ export default function Experience() {
         fov={cameraControls.fov}
         near={cameraControls.near}
         far={cameraControls.far}
+        zoom={cameraControls.zoom}
       />
 
       {/* Scene content */}
