@@ -26,7 +26,13 @@ export default function Character() {
   // ******************* Load models *******************
   const character = useGLTF("/models/character.glb")
   const animations = useGLTF("/models/animations.glb")
+  // const animationsScene = useGLTF("/models/animations1.glb")
+
   const { ref, actions } = useAnimations(animations.animations)
+  // const animationsActions = useAnimations(animationsScene.animations)
+
+  // console.log(animations)
+  // console.log(animationsActions)
 
   // ******************* Define meshes *******************
   const face: THREE.SkinnedMesh[] = [
@@ -76,7 +82,7 @@ export default function Character() {
   // ******************* Preload models *******************
   useGLTF.preload("/models/character.glb")
   useGLTF.preload("/models/animations.glb")
-
+  useGLTF.preload("/models/animations1.glb")
   // ******************* Textures *******************
   const allTextures = {
     skinBase: "/textures/skin-base.png",
