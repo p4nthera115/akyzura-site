@@ -130,19 +130,19 @@ export default function Experience() {
   const camera = useControls({
     camera: folder({
       position: {
-        value: [0, 0, 30],
+        value: [0, 0, 12],
         min: -100,
         max: 100,
         step: 1,
       },
       rotation: {
-        value: [0, 0, 0],
+        value: [-0.1, 0.1, 0],
         min: -10,
         max: 10,
         step: 0.1,
       },
       fov: {
-        value: 50,
+        value: 42,
         min: 10,
         max: 120,
         step: 1,
